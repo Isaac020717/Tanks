@@ -9,6 +9,7 @@
 %%%%%%%%%%%%% VARIABLES %%%%%%%%%%%%%
 
 % GENERAL GAME VARIABLES
+var FirstPlay : boolean := true
 var TimeRunning : int := Time.Elapsed
 var CharSpawned : boolean := false % SET BACK TO FALSE WHEN UI IS ADDED!!!
 var GridX : int := 3000

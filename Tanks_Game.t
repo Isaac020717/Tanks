@@ -82,6 +82,7 @@ loop
     else
 	
 	StartMenu(sMenu).ControlMenu()
+	HardReset ()
 	
     end if
 

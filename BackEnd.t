@@ -26,6 +26,8 @@ forward procedure DisplayHealthBar (xPos : int, yPos : int, health : int, maxHea
 forward procedure RespawnItem (itemType : string, itemIndex : int)
 forward procedure AwardExp (expAmount : int)
 forward procedure ResetVariables ()
+forward procedure ResetEnemiesAndFood ()
+forward procedure HardReset ()
 
 
 
@@ -36,7 +38,8 @@ class StartMenu % A Class For The Start Menu
     % Procedures, Functions and Variables To Import/Export
     import GameLogo, BeginButton, CreditsButton,
 	Mouse, MouseX, MouseY, MouseButton,
-	CharSpawned, GameScore
+	CharSpawned, GameScore,
+	FirstPlay, ResetEnemiesAndFood
     export ControlMenu
 
     % Variables
@@ -97,6 +100,10 @@ class StartMenu % A Class For The Start Menu
 	    
 	    % Check For Click
 	    if MouseButton = 1 then
+		if not FirstPlay then
+		    ResetEnemiesAndFood ()
+		end if
+		FirstPlay := false
 		GameScore := 0
 		CharSpawned := true
 	    end if
@@ -396,7 +403,7 @@ class Character % A Character Class
 	TimeRunning, ReloadTime,
 	CharHealth, MaxHealths, DisplayHealthBar,
 	DeathParticle
-    export Spawn, MoveChar, Shoot, PlayDeathEffect, dead, deathEffect
+    export Spawn, MoveChar, Shoot, PlayDeathEffect, Revive, dead, deathEffect
 
     % Character Variables
     var LastRegen : int := TimeRunning
@@ -599,6 +606,13 @@ class Character % A Character Class
 	end for
 
     end Shoot
+    
+    %Character Reviving Procedure (used when starting a new round)
+    proc Revive ()
+    
+	dead := false
+    
+    end Revive
 
 
 end Character
@@ -1249,3 +1263,21 @@ body procedure ResetVariables ()
     FoodDisplacementX := 0
     FoodDisplacementY := 0
 end ResetVariables
+
+% Reset Enemies Between Sessions
+body procedure ResetEnemiesAndFood ()
+    for i : lower (Enemies) .. upper (Enemies)
+	RespawnItem ("enemy", i)
+    end for
+    for i : lower (FoodPositionsX) .. upper (FoodPositionsX)
+	RespawnItem ("food", i)
+    end for
+end ResetEnemiesAndFood
+
+% Reset Game Variables Between Sessions
+body procedure HardReset ()
+    CharLvl := 1
+    CharHealth := MaxHealths(CharLvl)
+    Character (Char).Revive()
+end HardReset
+
